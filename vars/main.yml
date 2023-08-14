@@ -1,0 +1,32 @@
+---
+
+# docker compose vars
+docker_compose_version: 2.1
+docker_compose_services: wireguard
+wg_docker_image: lscr.io/linuxserver/wireguard
+wg_docker_image_version: latest
+docker_compose_container_name: wireguard
+docker_compose_puid: 1000
+docker_compose_pgid: 1000
+docker_compose_tz: America/Chicago
+
+# Change this to your WAN IP - if your WAN is dhcp then use your dynamic dns name
+wg_serverurl: wireguard.com
+
+wg_serverport: 51820
+wg_number_of_peers: 2
+wg_peerdns: 8.8.8.8
+wg_internal_subnet: 172.16.1.0
+wg_allowed_ips: 0.0.0.0/0
+wg_log: true
+
+docker_compose_vol_config_path: "{{ docker_project_src }}/config"
+
+docker_compose_ports_udp: "{{ wg_serverport }}"
+
+docker_compose_sysctl_net_ipv4: 1
+
+docker_compose_restart: unless-stopped
+
+
+docker_project_src: /mnt/tank/docker/wireguard

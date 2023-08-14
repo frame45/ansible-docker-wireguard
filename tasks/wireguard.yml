@@ -1,0 +1,28 @@
+---
+- name: Ensure directory structure is present
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0775
+  loop:
+    - "{{ docker_project_src }}"
+    - "{{ docker_project_src }}/config"
+    - "{{ docker_project_src }}/data"
+    - "{{ docker_project_src }}/logs"
+
+- name: Create wireguar docker-compose.yml file from template
+  ansible.builtin.template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ docker_project_src }}/docker-compose.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  notify: Restart wireguard 
+
+- name: Ensure docker container is present and running
+  community.docker.docker_compose:
+    project_src: "{{ docker_project_src }}"
+    build: false 
+  become: false

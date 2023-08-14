@@ -1,0 +1,28 @@
+---
+- name: Configure Wireguard
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Load configuration vars
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - vars/main.yml
+
+    - name: Ensure apt cache is up to date.
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when:
+        - ansible_facts.os_family == "Debian"
+
+  handlers:
+    - name: Include handlers.
+      ansible.builtin.import_tasks: handlers/main.yml
+
+  tasks:
+    - name: Setup Docker.
+      ansible.builtin.import_tasks: tasks/docker.yml
+
+    - name: Set up wireguard.
+      ansible.builtin.import_tasks: tasks/wireguard.yml

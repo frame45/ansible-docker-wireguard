@@ -1,0 +1,30 @@
+---
+version: "{{ docker_compose_version }}"
+services:
+  {{ docker_compose_services }}:
+    image: {{ wg_docker_image }}:{{ wg_docker_image_version }}
+    container_name: {{ docker_compose_container_name }}
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE #optional
+    environment:
+      - PUID={{ docker_compose_puid }}
+      - PGID={{ docker_compose_pgid }}
+      - TZ={{ docker_compose_tz }}
+      - SERVERURL={{ wg_serverurl }}
+      - SERVERPORT={{ wg_serverport }}
+      - PEERS={{ wg_number_of_peers }}
+      - PEERDNS={{ wg_peerdns }}
+      - INTERNAL_SUBNET={{ wg_internal_subnet }}
+      - ALLOWEDIPS={{ wg_allowed_ips }}
+      - PERSISTENTKEEPALIVE_PEERS= #optional
+      - LOG_CONFS={{ wg_log }}
+    volumes:
+      - {{ docker_compose_vol_config_path }}:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - {{ docker_compose_ports_udp }}:{{ docker_compose_ports_udp }}/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark={{ docker_compose_sysctl_net_ipv4 }}
+    restart: {{ docker_compose_restart }}
+    
